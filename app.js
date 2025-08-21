@@ -362,6 +362,31 @@
   /*** UI rendering functions ***/
   const app = document.getElementById('app');
 
+  // Fun feedback messages to keep the games lively.
+  const funMessages = {
+    correct: [
+      'Great job!',
+      'Awesome!',
+      'You nailed it!',
+      'Spot on!',
+    ],
+    incorrect: [
+      'Oops! Not quite.',
+      'Keep trying!',
+      'Almost!',
+      'Practice makes perfect!',
+    ],
+  };
+
+  // Display a random fun message. Parent defaults to the main app container.
+  function showFunMessage(isCorrect, parent = app) {
+    const msg = document.createElement('div');
+    msg.className = 'fun-message';
+    const pool = isCorrect ? funMessages.correct : funMessages.incorrect;
+    msg.textContent = pool[Math.floor(Math.random() * pool.length)];
+    parent.appendChild(msg);
+  }
+
   function clearApp() {
     app.innerHTML = '';
   }
@@ -465,7 +490,8 @@
       submit.addEventListener('click', () => {
         const userAnswer = input.value;
         totalThisSession++;
-        if (evaluateAnswer(userAnswer, item)) {
+        const isCorrect = evaluateAnswer(userAnswer, item);
+        if (isCorrect) {
           correctThisSession++;
           feedback.textContent = 'Correct!';
           feedback.classList.remove('incorrect');
@@ -475,6 +501,7 @@
           feedback.classList.remove('correct');
           feedback.classList.add('incorrect');
         }
+        showFunMessage(isCorrect, card);
         // After feedback, show next card after delay
         timeoutId = setTimeout(() => {
           index++;
@@ -547,7 +574,8 @@
           // Disable all options after selection
           const children = Array.from(optionsDiv.children);
           children.forEach((child) => child.classList.add('selected'));
-          if (i === q.answer) {
+          const isCorrect = i === q.answer;
+          if (isCorrect) {
             optEl.classList.add('correct');
             correctSession++;
           } else {
@@ -559,6 +587,7 @@
           explanation.className = 'feedback';
           explanation.textContent = q.explanation;
           container.appendChild(explanation);
+          showFunMessage(isCorrect, container);
           // Next after delay
           timeoutId = setTimeout(() => {
             index++;
@@ -630,7 +659,8 @@
       feedback.className = 'feedback';
       submit.addEventListener('click', () => {
         const ans = input.value.trim().toLowerCase();
-        if (ans === p.answer) {
+        const isCorrect = ans === p.answer;
+        if (isCorrect) {
           feedback.textContent = 'Correct!';
           feedback.classList.remove('incorrect');
           feedback.classList.add('correct');
@@ -640,6 +670,7 @@
           feedback.classList.remove('correct');
           feedback.classList.add('incorrect');
         }
+        showFunMessage(isCorrect, container);
         timeoutId = setTimeout(() => {
           index++;
           renderPuzzle();
@@ -701,7 +732,8 @@
       const question = items[index];
       const optionElements = Array.from(document.querySelectorAll('.option'));
       const correctIdx = question.correctIdx;
-      if (selectedIndex !== null && selectedIndex === correctIdx) {
+      const isCorrect = selectedIndex !== null && selectedIndex === correctIdx;
+      if (isCorrect) {
         correctSession++;
         optionElements[selectedIndex].classList.add('correct');
       } else {
@@ -713,6 +745,7 @@
       explanation.className = 'feedback';
       explanation.textContent = question.definition;
       app.appendChild(explanation);
+      showFunMessage(isCorrect, app);
       timeoutId = setTimeout(() => {
         index++;
         nextQuestion();

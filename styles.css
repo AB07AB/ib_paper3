@@ -141,6 +141,11 @@ body {
   color: var(--incorrect);
 }
 
+.fun-message {
+  margin-top: 0.5rem;
+  font-style: italic;
+}
+
 /* Multiple-choice */
 .options {
   display: flex;
