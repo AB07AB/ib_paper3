@@ -2,7 +2,7 @@
   Interactive revision games for IB Computer Science Paper 3 (2025 case study).
 
   This script manages the application state, renders the different game modes
-  (flashcards, multiple choice quiz, coding puzzles and a timed challenge) and
+  (flashcards, multiple choice quiz, coding practice and a timed challenge) and
   persists the player's progress in localStorage. It deliberately avoids
   external dependencies to remain fully functional in an offline environment.
 
@@ -257,39 +257,72 @@
     },
   ];
 
-  // Coding puzzles (fill‑in‑the‑blank questions).
-  const codingPuzzles = [
+  // Coding practice topics with starter Java code.
+  const codingTopics = [
     {
-      prompt: 'The ______ algorithm transforms raw text into a frequency vector of words.',
-      answer: 'bag-of-words',
+      id: 'linkedlist',
+      title: 'Linked Lists',
+      starter: `// Example: Implement a singly linked list
+class ListNode {
+  int data;
+  ListNode next;
+  ListNode(int d) { data = d; }
+}
+
+// Add your methods here
+
+public class LinkedListDemo {
+  public static void main(String[] args) {
+    // TODO: test your linked list
+  }
+}`,
     },
     {
-      prompt: 'RNNs are trained using ______ through time.',
-      answer: 'backpropagation',
+      id: 'recursion',
+      title: 'Recursion',
+      starter: `// Example: recursive factorial
+public int factorial(int n) {
+  if (n <= 1) return 1;
+  // TODO: recursive call
+}
+`,
     },
     {
-      prompt: 'The ______ problem can make it difficult for RNNs to learn long‑term dependencies.',
-      answer: 'vanishing gradient',
+      id: 'arrays2d',
+      title: '2D Arrays',
+      starter: `// Example: sum all elements in a 2D array
+public int sum2D(int[][] grid) {
+  int total = 0;
+  // TODO: loop through rows and columns
+  return total;
+}
+`,
     },
     {
-      prompt: 'The ______ neural network uses a self‑attention mechanism.',
-      answer: 'transformer',
+      id: 'queue',
+      title: 'Queues',
+      starter: `import java.util.*;
+
+public class QueueDemo {
+  public static void main(String[] args) {
+    Queue<Integer> q = new LinkedList<>();
+    // TODO: add and remove elements
+  }
+}
+`,
     },
     {
-      prompt: 'An ______ gate in an LSTM decides what information to discard from the cell state.',
-      answer: 'forget',
-    },
-    {
-      prompt: '________ data are artificially generated to supplement real datasets.',
-      answer: 'synthetic',
-    },
-    {
-      prompt: 'Hyperparameter ______ involves selecting the optimal learning rate and number of hidden layers.',
-      answer: 'tuning',
-    },
-    {
-      prompt: 'A ______ processing unit is specialised hardware for training and running large language models.',
-      answer: 'tensor',
+      id: 'stack',
+      title: 'Stacks',
+      starter: `import java.util.*;
+
+public class StackDemo {
+  public static void main(String[] args) {
+    Stack<Integer> st = new Stack<>();
+    // TODO: push and pop elements
+  }
+}
+`,
     },
   ];
 
@@ -380,7 +413,7 @@
     const modes = [
       { id: 'flashcards', label: 'Flashcard Recall' },
       { id: 'multiple', label: 'Multiple‑choice Quiz' },
-      { id: 'coding', label: 'Coding Puzzles' },
+      { id: 'coding', label: 'Coding' },
       { id: 'timed', label: 'Timed Challenge' },
       { id: 'dashboard', label: 'Results Dashboard' },
     ];
@@ -397,7 +430,7 @@
             startMultipleChoice();
             break;
           case 'coding':
-            startCodingPuzzles();
+            startCoding();
             break;
           case 'timed':
             startTimedChallenge();
@@ -582,84 +615,65 @@
     renderQuestion();
   }
 
-  /*** Coding puzzles ***/
-  function startCodingPuzzles() {
+  /*** Coding practice ***/
+  function startCoding() {
     state.currentGame = 'coding';
     clearApp();
     updateScoreboard();
-    const puzzles = shuffle(codingPuzzles.slice());
-    let index = 0;
-    let correctSession = 0;
-    let totalSession = puzzles.length;
-    let timeoutId;
-    function renderPuzzle() {
+
+    function renderTopicMenu() {
       clearApp();
-      clearTimeout(timeoutId);
-      if (index >= puzzles.length) {
-        const summary = document.createElement('div');
-        summary.className = 'card';
-        summary.innerHTML = `<h2>Puzzles complete!</h2><p>You got ${correctSession} out of ${totalSession} correct.</p>`;
-        const backBtn = document.createElement('button');
-        backBtn.className = 'menu-button';
-        backBtn.textContent = 'Back to menu';
-        backBtn.addEventListener('click', () => {
-          renderMenu();
-        });
-        summary.appendChild(backBtn);
-        app.appendChild(summary);
-        // Update global progress
-        state.progress.coding.correct += correctSession;
-        state.progress.coding.total += totalSession;
-        saveProgress(state.progress);
-        updateScoreboard();
-        return;
-      }
-      const p = puzzles[index];
-      const container = document.createElement('div');
-      container.className = 'card question-container';
-      const prompt = document.createElement('div');
-      prompt.className = 'question-text';
-      prompt.textContent = p.prompt;
-      const input = document.createElement('input');
-      input.className = 'flashcard-input';
-      input.placeholder = 'Type your answer...';
-      const submit = document.createElement('button');
-      submit.className = 'submit-button';
-      submit.textContent = 'Submit';
-      const feedback = document.createElement('div');
-      feedback.className = 'feedback';
-      submit.addEventListener('click', () => {
-        const ans = input.value.trim().toLowerCase();
-        if (ans === p.answer) {
-          feedback.textContent = 'Correct!';
-          feedback.classList.remove('incorrect');
-          feedback.classList.add('correct');
-          correctSession++;
-        } else {
-          feedback.textContent = `Incorrect. Correct answer: ${p.answer}`;
-          feedback.classList.remove('correct');
-          feedback.classList.add('incorrect');
-        }
-        timeoutId = setTimeout(() => {
-          index++;
-          renderPuzzle();
-        }, 4000);
+      const menu = document.createElement('div');
+      menu.className = 'menu';
+      const intro = document.createElement('p');
+      intro.textContent = 'Select a topic and practise writing Java code.';
+      menu.appendChild(intro);
+      codingTopics.forEach((topic) => {
+        const btn = document.createElement('button');
+        btn.className = 'menu-button';
+        btn.textContent = topic.title;
+        btn.addEventListener('click', () => renderEditor(topic));
+        menu.appendChild(btn);
       });
-      container.appendChild(prompt);
-      container.appendChild(input);
-      container.appendChild(submit);
-      container.appendChild(feedback);
       const backBtn = document.createElement('button');
       backBtn.className = 'menu-button';
       backBtn.textContent = 'Back to menu';
-      backBtn.addEventListener('click', () => {
-        clearTimeout(timeoutId);
-        renderMenu();
+      backBtn.addEventListener('click', renderMenu);
+      menu.appendChild(backBtn);
+      app.appendChild(menu);
+    }
+
+    function renderEditor(topic) {
+      clearApp();
+      const container = document.createElement('div');
+      container.className = 'card question-container';
+      const title = document.createElement('div');
+      title.className = 'question-text';
+      title.textContent = topic.title;
+      const textarea = document.createElement('textarea');
+      textarea.className = 'code-editor';
+      textarea.value = topic.starter;
+      const runBtn = document.createElement('button');
+      runBtn.className = 'submit-button';
+      runBtn.textContent = 'Run (local)';
+      const feedback = document.createElement('div');
+      feedback.className = 'feedback';
+      runBtn.addEventListener('click', () => {
+        feedback.textContent = 'Code submitted. Execution is not available in this demo.';
       });
+      const backBtn = document.createElement('button');
+      backBtn.className = 'menu-button';
+      backBtn.textContent = 'Back to topics';
+      backBtn.addEventListener('click', startCoding);
+      container.appendChild(title);
+      container.appendChild(textarea);
+      container.appendChild(runBtn);
+      container.appendChild(feedback);
       container.appendChild(backBtn);
       app.appendChild(container);
     }
-    renderPuzzle();
+
+    renderTopicMenu();
   }
 
   /*** Timed challenge ***/
