@@ -422,9 +422,11 @@
     let index = 0;
     let correctThisSession = 0;
     let totalThisSession = 0;
+    let timeoutId;
 
     function renderCard() {
       clearApp();
+      clearTimeout(timeoutId);
       if (index >= items.length) {
         // End of session
         const summary = document.createElement('div');
@@ -474,15 +476,23 @@
           feedback.classList.add('incorrect');
         }
         // After feedback, show next card after delay
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           index++;
           renderCard();
-        }, 2000);
+        }, 4000);
+      });
+      const backBtn = document.createElement('button');
+      backBtn.className = 'menu-button';
+      backBtn.textContent = 'Back to menu';
+      backBtn.addEventListener('click', () => {
+        clearTimeout(timeoutId);
+        renderMenu();
       });
       card.appendChild(termTitle);
       card.appendChild(input);
       card.appendChild(submit);
       card.appendChild(feedback);
+      card.appendChild(backBtn);
       app.appendChild(card);
     }
     renderCard();
@@ -497,8 +507,10 @@
     let index = 0;
     let correctSession = 0;
     let totalSession = questions.length;
+    let timeoutId;
     function renderQuestion() {
       clearApp();
+      clearTimeout(timeoutId);
       if (index >= questions.length) {
         // End of quiz
         const summary = document.createElement('div');
@@ -548,15 +560,23 @@
           explanation.textContent = q.explanation;
           container.appendChild(explanation);
           // Next after delay
-          setTimeout(() => {
+          timeoutId = setTimeout(() => {
             index++;
             renderQuestion();
-          }, 2500);
+          }, 4000);
         });
         optionsDiv.appendChild(optEl);
       });
+      const backBtn = document.createElement('button');
+      backBtn.className = 'menu-button';
+      backBtn.textContent = 'Back to menu';
+      backBtn.addEventListener('click', () => {
+        clearTimeout(timeoutId);
+        renderMenu();
+      });
       container.appendChild(qText);
       container.appendChild(optionsDiv);
+      container.appendChild(backBtn);
       app.appendChild(container);
     }
     renderQuestion();
@@ -571,8 +591,10 @@
     let index = 0;
     let correctSession = 0;
     let totalSession = puzzles.length;
+    let timeoutId;
     function renderPuzzle() {
       clearApp();
+      clearTimeout(timeoutId);
       if (index >= puzzles.length) {
         const summary = document.createElement('div');
         summary.className = 'card';
@@ -618,15 +640,23 @@
           feedback.classList.remove('correct');
           feedback.classList.add('incorrect');
         }
-        setTimeout(() => {
+        timeoutId = setTimeout(() => {
           index++;
           renderPuzzle();
-        }, 2000);
+        }, 4000);
       });
       container.appendChild(prompt);
       container.appendChild(input);
       container.appendChild(submit);
       container.appendChild(feedback);
+      const backBtn = document.createElement('button');
+      backBtn.className = 'menu-button';
+      backBtn.textContent = 'Back to menu';
+      backBtn.addEventListener('click', () => {
+        clearTimeout(timeoutId);
+        renderMenu();
+      });
+      container.appendChild(backBtn);
       app.appendChild(container);
     }
     renderPuzzle();
@@ -647,6 +677,7 @@
     const totalSession = items.length;
     let timeRemaining = 10; // seconds per question
     let timerInterval;
+    let timeoutId;
 
     function startTimer(bar) {
       timeRemaining = 10;
@@ -682,14 +713,16 @@
       explanation.className = 'feedback';
       explanation.textContent = question.definition;
       app.appendChild(explanation);
-      setTimeout(() => {
+      timeoutId = setTimeout(() => {
         index++;
         nextQuestion();
-      }, 2000);
+      }, 4000);
     }
 
     function nextQuestion() {
       clearApp();
+      clearTimeout(timeoutId);
+      clearInterval(timerInterval);
       if (index >= items.length) {
         // End challenge
         const summary = document.createElement('div');
@@ -740,6 +773,14 @@
       bar.className = 'timer';
       barContainer.appendChild(bar);
       container.appendChild(barContainer);
+      const backBtn = document.createElement('button');
+      backBtn.className = 'menu-button';
+      backBtn.textContent = 'Back to menu';
+      backBtn.addEventListener('click', () => {
+        clearTimeout(timeoutId);
+        clearInterval(timerInterval);
+        renderMenu();
+      });
       const optsDiv = document.createElement('div');
       optsDiv.className = 'options';
       shuffled.forEach((defText, i) => {
@@ -752,6 +793,7 @@
         optsDiv.appendChild(optEl);
       });
       container.appendChild(optsDiv);
+      container.appendChild(backBtn);
       app.appendChild(container);
       // Start timer after DOM updated
       setTimeout(() => startTimer(bar), 100);
