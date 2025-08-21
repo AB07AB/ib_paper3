@@ -1,0 +1,208 @@
+/*
+  Stylesheet for the IB Computer Science Paper 3 revision games.
+
+  This file defines a minimalist but engaging layout using soft colours,
+  rounded cards and clear typography. Utility classes are kept concise
+  to emulate a Tailwind-like feel without requiring any external
+  dependencies. Feel free to tweak the colour variables to match your
+  preferences.
+*/
+
+:root {
+  --primary-bg: #f7f9fc;
+  --card-bg: #ffffff;
+  --accent: #4a90e2;
+  --text-color: #2c3e50;
+  --correct: #27ae60;
+  --incorrect: #e74c3c;
+  --shadow-colour: rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-stack);
+  background: var(--primary-bg);
+  color: var(--text-color);
+}
+
+.app-header {
+  background: var(--card-bg);
+  padding: 1rem 2rem;
+  border-bottom: 1px solid #e6eaf1;
+  box-shadow: 0 2px 4px var(--shadow-colour);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.app-header h1 {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--accent);
+}
+.scoreboard {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.app-container {
+  padding: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* Generic card styling */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px var(--shadow-colour);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* Start menu styles */
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: stretch;
+}
+.menu-button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.menu-button:hover {
+  background: #357ab8;
+}
+
+/* Question display */
+.question-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.question-text {
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Flashcard input */
+.flashcard-input {
+  width: 100%;
+  padding: 0.6rem;
+  border: 1px solid #d9e3f0;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+}
+
+.submit-button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 0.6rem 1rem;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.submit-button:hover {
+  background: #357ab8;
+}
+
+/* Feedback area */
+.feedback {
+  font-size: 1rem;
+  margin-top: 0.5rem;
+}
+.feedback.correct {
+  color: var(--correct);
+}
+.feedback.incorrect {
+  color: var(--incorrect);
+}
+
+/* Multiple-choice */
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  background: var(--primary-bg);
+  border: 1px solid #d9e3f0;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.option:hover {
+  background: #e6eaf1;
+}
+.option.selected {
+  background: #dfe8f7;
+  border-color: var(--accent);
+}
+.option.correct {
+  background: #e8f6ef;
+  border-color: var(--correct);
+}
+.option.incorrect {
+  background: #fae7e7;
+  border-color: var(--incorrect);
+}
+
+/* Timer bar */
+.timer {
+  height: 8px;
+  background: var(--accent);
+  border-radius: var(--border-radius);
+  transition: width 1s linear;
+}
+
+/* Dashboard */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.dashboard table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.dashboard th,
+.dashboard td {
+  border: 1px solid #d9e3f0;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+.dashboard th {
+  background: #f0f4fa;
+}
+.dashboard-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent);
+}
